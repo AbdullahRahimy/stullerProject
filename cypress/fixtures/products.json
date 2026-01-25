@@ -1,0 +1,13 @@
+{
+  "task1Product": {
+    "sku": "4196:4677:P",
+    "specialInstructions": "Task 1 - E2E Workflow Automation",
+    "expectedItemDescription": "14K Yellow 3 mm Round 3-Stone Family Ring Mounting"
+  },
+  "task2Product": {
+    "sku": "4196:4677:P"
+  },
+  "task3Product": {
+    "sku": "61-0089:100000:T"
+  }
+}

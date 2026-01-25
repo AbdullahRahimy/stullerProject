@@ -1,0 +1,44 @@
+name: Cypress - Parallel Tasks
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  cypress-tasks:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        spec:
+          - task1-workflow.cy.js
+          - task2-api-ui.cy.js
+          - task3-debug.cy.js
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress spec
+        run: >-
+          npx cypress run
+          --spec "cypress/e2e/${{ matrix.spec }}"
+          --reporter mochawesome
+          --reporter-options "reportDir=cypress/reports,overwrite=false,html=true,json=true"
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report-${{ matrix.spec }}
+          path: cypress/reports

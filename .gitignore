@@ -1,0 +1,34 @@
+# Cypress generated files
+cypress/videos/
+cypress/screenshots/
+cypress/results/
+cypress/downloads/
+cypress/reports/
+
+# Environment files with credentials
+cypress.env.json
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+
+# Test artifacts
+*.log
