@@ -45,3 +45,17 @@ jobs:
         with:
           name: mochawesome-report-${{ matrix.spec }}
           path: cypress/reports
+
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-${{ matrix.spec }}
+          path: cypress/screenshots
+
+      - name: Upload videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-${{ matrix.spec }}
+          path: cypress/videos

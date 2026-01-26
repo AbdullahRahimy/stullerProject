@@ -1,5 +1,7 @@
 const { defineConfig } = require('cypress');
 
+const isCI = process.env.CI === 'true' || process.env.CI === '1';
+
 module.exports = defineConfig({
   // Project metadata
   projectId: 'stuller-cypress-assessment',
@@ -69,7 +71,8 @@ module.exports = defineConfig({
   },
 
   // Video and screenshot settings - ONLY ON FAILURE
-  video: false,                      // Disable video recording (enable only if needed)
+  video: isCI,                        // Record videos in CI to aid debugging
+  videoUploadOnPasses: false,         // Only keep videos for failed runs
   screenshotOnRunFailure: true,      // Screenshot only when test fails
   screenshotsFolder: 'cypress/screenshots',
   videosFolder: 'cypress/videos',
