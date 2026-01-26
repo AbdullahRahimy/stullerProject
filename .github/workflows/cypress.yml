@@ -9,8 +9,9 @@ jobs:
   cypress-tasks:
     runs-on: ubuntu-latest
     env:
-      STULLER_USERNAME: ${{ secrets.STULLER_USERNAME }}
-      STULLER_PASSWORD: ${{ secrets.STULLER_PASSWORD }}
+      # Cypress only auto-imports environment variables prefixed with CYPRESS_
+      CYPRESS_STULLER_USERNAME: ${{ secrets.STULLER_USERNAME }}
+      CYPRESS_STULLER_PASSWORD: ${{ secrets.STULLER_PASSWORD }}
     strategy:
       fail-fast: false
       matrix:
