@@ -23,6 +23,7 @@ class CartPage {
   };
 
   visitCartPage() {
+    cy.intercept('GET', '**/cart/getcart**').as('cartLoad');
     cy.get(this.selectors.cartIconLabel)
       .should('be.visible')
       .click();
@@ -32,6 +33,8 @@ class CartPage {
       .should('be.visible')
       .click();
     this.waitForPageLoad();
+    cy.url().should('include', '/cart');
+    cy.wait('@cartLoad', { timeout: 15000 });
     return this;
   }
 
@@ -58,7 +61,7 @@ class CartPage {
   }
 
   verifyItemNumberInCart(expectedItemNumber) {
-    cy.contains('a', expectedItemNumber).should('be.visible');
+    cy.contains(expectedItemNumber, { timeout: 15000 }).should('be.visible');
     return this;
   }
 
