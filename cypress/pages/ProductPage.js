@@ -86,7 +86,11 @@ class ProductPage {
 
     cy.get('@qtyInput')
       .click({ force: true })
-      .type(`{selectall}${targetValue}`, { force: true })
+      .type(`{selectall}${targetValue}`, { force: true });
+
+    cy.get(this.selectors.quantityInput)
+      .filter(':visible')
+      .first()
       .blur();
 
     cy.get('@qtyInput').then(($input) => {
@@ -94,8 +98,7 @@ class ProductPage {
         cy.wrap($input)
           .invoke('val', targetValue)
           .trigger('input')
-          .trigger('change')
-          .blur();
+          .trigger('change');
       }
     });
 
