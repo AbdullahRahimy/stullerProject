@@ -33,6 +33,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Preflight - check Cypress credential env vars
+        run: |
+          if [ -n "$CYPRESS_STULLER_USERNAME" ]; then echo "CYPRESS_STULLER_USERNAME is set"; else echo "CYPRESS_STULLER_USERNAME is MISSING"; fi
+          if [ -n "$CYPRESS_STULLER_PASSWORD" ]; then echo "CYPRESS_STULLER_PASSWORD is set"; else echo "CYPRESS_STULLER_PASSWORD is MISSING"; fi
+
       - name: Run Cypress spec
         run: >-
           npx cypress run

@@ -51,7 +51,7 @@ class LoginPage {
       .should('be.visible')
       .first()
       .clear()
-      .type(password, { log: false }); // Don't log password
+      .type(password, { log: false });
     return this;
   }
 

@@ -32,8 +32,7 @@ describe('Task 1: E2E Workflow Automation', () => {
     const password = Cypress.env('STULLER_PASSWORD');
 
     if (!username || !password) {
-      cy.log('**WARNING: Credentials not set. Set STULLER_USERNAME and STULLER_PASSWORD env vars**');
-      this.skip();
+      throw new Error('Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.');
     }
 
     cy.fixture('products').then((products) => {

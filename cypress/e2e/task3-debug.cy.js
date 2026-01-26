@@ -66,12 +66,7 @@ describe('Task 3: Packaging Product Page (Refactored)', () => {
     const password = Cypress.env('STULLER_PASSWORD');
 
     if (!username || !password) {
-      const message = 'Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.';
-      if (!Cypress.config('isInteractive')) {
-        throw new Error(message);
-      }
-      cy.log(message);
-      this.skip();
+      throw new Error('Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.');
     }
 
     cy.login(username, password, { useSession: true });
