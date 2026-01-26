@@ -67,12 +67,14 @@ cypress/
 - Fixed waits race with network speed
 - DOM order changes cause wrong elements to be targeted
 - Cart update is async and not guaranteed before navigation
+- Quantity field starts with a default value (e.g., 1). If not fully cleared, typing 5 appends to the existing value (ending up as 15).
 
 **How it was fixed**
 - Wait on `readyState` and element visibility
 - Use stable selectors in POM
 - Verify cart badge and product presence before assertions
 - Updated quantity input selector to `[data-test="quantity"]` and re‑queried the visible input to avoid stale DOM updates
+- Clear the quantity input with select‑all + backspace before typing to avoid appending to the existing value
 - Load fixtures once in `before()` and reuse across Task 3 tests to reduce repeated I/O and keep tests consistent
 - Reuse `searchUrl` in `beforeEach()` for consistent navigation across Task 3 tests
 - Assert quantity input value after updating before adding to cart

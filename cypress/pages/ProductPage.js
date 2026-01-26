@@ -80,11 +80,8 @@ class ProductPage {
     cy.get(this.selectors.quantityInput)
       .filter(':visible')
       .first()
-      .clear({ force: true });
-
-    cy.get(this.selectors.quantityInput)
-      .filter(':visible')
-      .first()
+      .click({ force: true })
+      .type('{selectall}{backspace}', { force: true })
       .type(quantity.toString(), { force: true });
     return this;
   }
