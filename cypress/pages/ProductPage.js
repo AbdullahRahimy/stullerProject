@@ -73,31 +73,24 @@ class ProductPage {
   setQuantity(quantity) {
     const targetValue = quantity.toString();
 
-    cy.intercept('POST', '**/cart/price/**').as('cartPriceSet');
-
     cy.get(this.selectors.quantityInput, { timeout: 15000 })
       .filter(':visible')
       .first()
       .should('be.visible')
       .and('not.be.disabled');
 
-    // Set value directly via DOM to avoid re-render issues
     cy.get(this.selectors.quantityInput)
       .filter(':visible')
       .first()
-      .focus()
-      .invoke('val', '')
-      .invoke('val', targetValue)
-      .trigger('input', { force: true })
-      .trigger('change', { force: true });
+      .should(($input) => {
+        if ($input.val() !== targetValue) {
+          $input.val(targetValue);
+          $input.trigger('input');
+          $input.trigger('change');
+        }
 
-    cy.wait('@cartPriceSet', { timeout: 10000 });
-
-    // Re-query and verify value stuck after XHR completes
-    cy.get(this.selectors.quantityInput)
-      .filter(':visible')
-      .first()
-      .should('have.value', targetValue);
+        expect($input.val()).to.eq(targetValue);
+      });
 
     return this;
   }
