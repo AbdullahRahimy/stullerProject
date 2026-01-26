@@ -73,39 +73,32 @@ class ProductPage {
   setQuantity(quantity) {
     const targetValue = quantity.toString();
 
+    cy.intercept('POST', '**/cart/price/**').as('cartPriceSet');
+
     cy.get(this.selectors.quantityInput, { timeout: 15000 })
       .filter(':visible')
       .first()
       .should('be.visible')
       .and('not.be.disabled');
 
+    // Set value directly via DOM to avoid re-render issues
     cy.get(this.selectors.quantityInput)
       .filter(':visible')
       .first()
-      .as('qtyInput');
+      .focus()
+      .invoke('val', '')
+      .invoke('val', targetValue)
+      .trigger('input', { force: true })
+      .trigger('change', { force: true });
 
-    cy.get('@qtyInput')
-      .click({ force: true })
-      .type(`{selectall}${targetValue}`, { force: true });
+    cy.wait('@cartPriceSet', { timeout: 10000 });
 
-    cy.get(this.selectors.quantityInput)
-      .filter(':visible')
-      .first()
-      .blur();
-
-    cy.get('@qtyInput').then(($input) => {
-      if ($input.val() !== targetValue) {
-        cy.wrap($input)
-          .invoke('val', targetValue)
-          .trigger('input')
-          .trigger('change');
-      }
-    });
-
+    // Re-query and verify value stuck after XHR completes
     cy.get(this.selectors.quantityInput)
       .filter(':visible')
       .first()
       .should('have.value', targetValue);
+
     return this;
   }
 
@@ -118,12 +111,16 @@ class ProductPage {
   }
 
   addToCart() {
+    cy.document().its('readyState').should('eq', 'complete');
+
     cy.get(this.selectors.addToCartButton, { timeout: 10000 })
       .filter(':visible')
       .first()
       .should('be.visible')
-      .click();
+      .click({ force: true });
 
+    // Wait for cart to update by checking the cart count badge appears/updates
+    cy.get('[data-test="cart-count"]', { timeout: 10000 }).should('be.visible');
     cy.document().its('readyState').should('eq', 'complete');
     return this;
   }
