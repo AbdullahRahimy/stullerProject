@@ -71,6 +71,8 @@ class ProductPage {
   }
 
   setQuantity(quantity) {
+    const targetValue = quantity.toString();
+
     cy.get(this.selectors.quantityInput, { timeout: 15000 })
       .filter(':visible')
       .first()
@@ -80,13 +82,27 @@ class ProductPage {
     cy.get(this.selectors.quantityInput)
       .filter(':visible')
       .first()
+      .as('qtyInput');
+
+    cy.get('@qtyInput')
       .click({ force: true })
-      .type(`{selectall}${quantity}`, { force: true });
+      .type(`{selectall}${targetValue}`, { force: true })
+      .blur();
+
+    cy.get('@qtyInput').then(($input) => {
+      if ($input.val() !== targetValue) {
+        cy.wrap($input)
+          .invoke('val', targetValue)
+          .trigger('input')
+          .trigger('change')
+          .blur();
+      }
+    });
 
     cy.get(this.selectors.quantityInput)
       .filter(':visible')
       .first()
-      .should('have.value', quantity.toString());
+      .should('have.value', targetValue);
     return this;
   }
 
