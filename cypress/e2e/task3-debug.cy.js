@@ -61,13 +61,15 @@ describe('Task 3: Packaging Product Page (Refactored)', () => {
     ProductPage.verifyShipDateVisible();
   });
 
-  it('should update quantity and add product to cart', () => {
+  it('should update quantity and add product to cart', function () {
     const username = Cypress.env('STULLER_USERNAME');
     const password = Cypress.env('STULLER_PASSWORD');
 
-    if (username && password) {
-      cy.login(username, password, { useSession: false });
+    if (!username || !password) {
+      this.skip();
     }
+
+    cy.login(username, password, { useSession: true });
     cy.visit(searchUrl);
 
     ProductPage.setQuantity(5);
