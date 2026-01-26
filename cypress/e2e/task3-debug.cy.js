@@ -67,8 +67,6 @@ describe('Task 3: Packaging Product Page (Refactored)', () => {
 
     if (!username || !password) {
       const message = 'Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.';
-      // In CI/run mode we want a hard failure (and a recorded video/screenshot artifacts).
-      // Cypress.env('CI') is not guaranteed unless explicitly provided; use run-mode detection.
       if (!Cypress.config('isInteractive')) {
         throw new Error(message);
       }

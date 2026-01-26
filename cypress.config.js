@@ -3,28 +3,18 @@ const { defineConfig } = require('cypress');
 const isCI = process.env.CI === 'true' || process.env.CI === '1';
 
 module.exports = defineConfig({
-  // Project metadata
   projectId: 'stuller-cypress-assessment',
 
-  // E2E Configuration
   e2e: {
-    // Base URL for the application under test
     baseUrl: 'https://www.stuller.com',
 
-    // Spec file pattern
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
 
-    // Support file
     supportFile: 'cypress/support/e2e.js',
 
-    // Fixtures folder
     fixturesFolder: 'cypress/fixtures',
 
-    // Setup Node events
     setupNodeEvents(on, config) {
-      // Register event listeners here
-      
-      // Log when test starts
       on('before:run', (details) => {
         console.log('Starting test run:', details.specs?.length || 0, 'specs');
       });
@@ -34,7 +24,6 @@ module.exports = defineConfig({
         console.log('Test run complete. Passed:', results.totalPassed, 'Failed:', results.totalFailed);
       });
 
-      // Task for logging to Node console
       on('task', {
         log(message) {
           console.log(message);
@@ -44,8 +33,7 @@ module.exports = defineConfig({
 
       return config;
     },
-
-    // Experimental features
+    // Enable experimental run all specs feature for faster runs
     experimentalRunAllSpecs: true,
 
     // Test isolation (must be inside e2e config)
@@ -66,32 +54,28 @@ module.exports = defineConfig({
 
   // Retries for flaky test prevention
   retries: {
-    runMode: 2,      // Retry failed tests 2 times in CI
-    openMode: 0      // No retries in interactive mode
+    runMode: 2,      
+    openMode: 0      
   },
 
   // Video and screenshot settings - ONLY ON FAILURE
-  video: isCI,                        // Record videos in CI to aid debugging
-  videoUploadOnPasses: false,         // Only keep videos for failed runs
-  screenshotOnRunFailure: true,      // Screenshot only when test fails
+  video: isCI,                        
+  videoUploadOnPasses: false,       
+  screenshotOnRunFailure: true,      
   screenshotsFolder: 'cypress/screenshots',
   videosFolder: 'cypress/videos',
 
-  // Watchlist for file changes
+  // Watch for file changes in interactive mode
   watchForFileChanges: true,
 
   // Number of tests to run in parallel (for run mode)
   numTestsKeptInMemory: 50,
 
   // Chrome preferences for better stability
-  chromeWebSecurity: false, // Allow cross-origin requests
+  chromeWebSecurity: false,
 
   // Environment variables (defaults - override in cypress.env.json or CLI)
   env: {
-    // Credentials should be set via cypress.env.json or --env flag
-    // STULLER_USERNAME: 'your-username',
-    // STULLER_PASSWORD: 'your-password',
-    
     // API Configuration
     API_BASE_URL: 'https://api.stuller.com',
     
