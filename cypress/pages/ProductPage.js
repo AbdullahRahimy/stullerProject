@@ -55,18 +55,19 @@ class ProductPage {
   }
 
   enterSpecialInstructions(instructions) {
-    cy.get(this.selectors.specialInstructionsInput, { timeout: 15000 })
-      .filter(':visible')
-      .first()
-      .should('be.visible');
+    const selector = this.selectors.specialInstructionsInput;
 
-    cy.get(this.selectors.specialInstructionsInput)
+    cy.get(selector, { timeout: 15000 })
       .filter(':visible')
       .first()
       .scrollIntoView()
-      .click()
-      .clear()
-      .type(instructions);
+      .should('be.visible')
+      .and('not.be.disabled');
+
+    // Re-query between actions to tolerate re-renders in CI.
+    cy.get(selector).filter(':visible').first().click({ force: true });
+    cy.get(selector).filter(':visible').first().clear({ force: true });
+    cy.get(selector).filter(':visible').first().type(instructions, { force: true });
     return this;
   }
 
