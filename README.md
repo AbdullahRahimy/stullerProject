@@ -8,13 +8,20 @@ This repo is a clean Cypress setup for the Stuller.com assessment. Tests are spl
 - `npm install`
 
 2) Add credentials (required for price and cart actions)
-Create `cypress.env.json` in the project root:
+
+Security note: credentials are not committed to the repo. Locally you can use a `cypress.env.json` file (ignored by git) or environment variables. In CI (GitHub Actions), store credentials as GitHub Secrets.
+
+Option A (local file): create `cypress.env.json` in the project root (copy from `cypress.env.example.json`):
 ```json
 {
   "STULLER_USERNAME": "your-username",
   "STULLER_PASSWORD": "your-password"
 }
 ```
+
+Option B (env vars): set `CYPRESS_STULLER_USERNAME` and `CYPRESS_STULLER_PASSWORD` in your shell/CI environment.
+
+Note: GitHub Secrets are not shared with other users/forks. Anyone running the tests (locally or in their own CI) must provide their own credentials.
 
 ## Run tests
 
@@ -55,7 +62,7 @@ cypress/
 - Refactored to remove hard waits and brittle selectors
 - Uses POM methods and Cypress retries
 - Adds two extra tests (image + title checks)
-- Used secrets in Github to store credentials like Username and Password
+- Credentials are loaded from Cypress env vars (locally via `cypress.env.json`, in CI via GitHub Secrets)
 
 ## Debugging Notes (Task 3)
 
