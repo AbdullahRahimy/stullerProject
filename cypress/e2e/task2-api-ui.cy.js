@@ -17,20 +17,19 @@ describe('Task 2: API + UI Hybrid Validation', () => {
   });
 
   it('Validate SKU, price, description, and status between API and UI', function () {
-    const username = Cypress.env('STULLER_USERNAME');
-    const password = Cypress.env('STULLER_PASSWORD');
+    cy.getStullerCredentials().then(({ username, password }) => {
+      cy.fixture('products').then((products) => {
+        const productSkuId = products.task2Product.sku;
+        const apiBaseUrl = (Cypress.env('API_BASE_URL') || '').replace(/\/$/, '');
 
-    if (!username || !password) {
-      throw new Error('Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.');
-    }
-
-    cy.fixture('products').then((products) => {
-      const sku = products.task2Product.sku;
+        if (!apiBaseUrl) {
+          throw new Error('Missing API_BASE_URL. Configure Cypress env vars (e.g., in cypress.config.js env).');
+        }
 
       cy.logStep('Fetch product data from API (basic auth)');
       cy.request({
         method: 'GET',
-        url: `https://api.stuller.com/v2/products?SKU=${encodeURIComponent(sku)}`,
+        url: `${apiBaseUrl}/v2/products?SKU=${encodeURIComponent(productSkuId)}`,
         auth: {
           user: username,
           pass: password
@@ -52,13 +51,13 @@ describe('Task 2: API + UI Hybrid Validation', () => {
 
         cy.logStep('Login via UI and search product');
         cy.login(username, password, { useSession: true });
-        cy.searchProduct(sku);
-        cy.verifySearchResult(sku);
+        cy.searchProduct(productSkuId);
+        cy.verifySearchResult(productSkuId);
         ProductPage.waitForProductLoad();
 
         cy.logStep('Compare API and UI fields');
         ProductPage.getItemNumber().then((uiSkuText) => {
-          expect(uiSkuText.trim()).to.equal(apiSku || sku);
+          expect(uiSkuText.trim()).to.equal(apiSku || productSkuId);
         });
 
         ProductPage.getProductPrice().then((uiPriceText) => {
@@ -79,6 +78,7 @@ describe('Task 2: API + UI Hybrid Validation', () => {
           expect(uiStatus.trim()).to.equal(apiStatus);
         });
       });
+    });
     });
   });
 });

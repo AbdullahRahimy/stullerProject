@@ -38,22 +38,22 @@ import CartPage from '../pages/CartPage';
 
 describe('Task 3: Packaging Product Page (Refactored)', () => {
   let products;
-  let sku;
+  let productSkuId;
   let searchUrl;
 
   before(() => {
     cy.log('**=== Task 3: Debug & Reliability Challenge ===**');
     cy.fixture('products').then((data) => {
       products = data;
-      sku = products.task3Product.sku;
-      searchUrl = `https://www.stuller.com/search/results?query=${encodeURIComponent(sku)}`;
+      productSkuId = products.task3Product.sku;
+      searchUrl = `https://www.stuller.com/search/results?query=${encodeURIComponent(productSkuId)}`;
     });
   });
 
   beforeEach(() => {
     cy.visit(searchUrl);
     cy.document().its('readyState').should('eq', 'complete');
-    cy.contains(sku).should('be.visible');
+    cy.contains(productSkuId).should('be.visible');
   });
 
   it('should load product and show core details', () => {
@@ -62,25 +62,20 @@ describe('Task 3: Packaging Product Page (Refactored)', () => {
   });
 
   it('should update quantity and add product to cart', function () {
-    const username = Cypress.env('STULLER_USERNAME');
-    const password = Cypress.env('STULLER_PASSWORD');
+    cy.getStullerCredentials().then(({ username, password }) => {
+      cy.login(username, password, { useSession: true });
+      cy.visit(searchUrl);
 
-    if (!username || !password) {
-      throw new Error('Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.');
-    }
+      ProductPage.setQuantity(5);
+      ProductPage.verifyQuantityValue(5);
+      ProductPage.addToCart();
+      CartPage.verifyCartCount(1);
 
-    cy.login(username, password, { useSession: true });
-    cy.visit(searchUrl);
-
-    ProductPage.setQuantity(5);
-    ProductPage.verifyQuantityValue(5);
-    ProductPage.addToCart();
-    CartPage.verifyCartCount(1);
-
-    CartPage.visitCartPage();
-    CartPage.verifyItemNumberInCart(sku);
-    CartPage.verifyCartCount(1);
-    CartPage.removeAllItems();
+      CartPage.visitCartPage();
+      CartPage.verifyItemNumberInCart(productSkuId);
+      CartPage.verifyCartCount(1);
+      CartPage.removeAllItems();
+    });
   });
 
   it('NEW: should show product image on the page', () => {

@@ -28,44 +28,39 @@ describe('Task 1: E2E Workflow Automation', () => {
   });
 
   it('Complete E2E workflow from search to cart verification', function () {
-    const username = Cypress.env('STULLER_USERNAME');
-    const password = Cypress.env('STULLER_PASSWORD');
+    cy.getStullerCredentials().then(({ username, password }) => {// create on method in command and use it over the automation suite
+      cy.fixture('products').then((products) => {
+        const productSkuId = products.task1Product.sku;
+        const specialInstructions = products.task1Product.specialInstructions;
+        const expectedItemDescription = products.task1Product.expectedItemDescription;
 
-    if (!username || !password) {
-      throw new Error('Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.');
-    }
+        cy.logStep('Login with provided credentials');
+        cy.login(username, password, { useSession: false });
 
-    cy.fixture('products').then((products) => {
-      const productSku = products.task1Product.sku;
-      const specialInstructions = products.task1Product.specialInstructions;
-      const expectedItemDescription = products.task1Product.expectedItemDescription;
+        cy.logStep(`Search for product: ${productSkuId}`);
+        cy.searchProduct(productSkuId);
+        cy.verifySearchResult(productSkuId);
 
-      cy.logStep('Login with provided credentials');
-      cy.login(username, password, { useSession: false });
+        cy.logStep('Capture item number from product page');
+        ProductPage.waitForProductLoad();
+        ProductPage.getItemNumber().should('contain', productSkuId);
 
-      cy.logStep(`Search for product: ${productSku}`);
-      cy.searchProduct(productSku);
-      cy.verifySearchResult(productSku);
+        cy.logStep(`Enter special instructions: ${specialInstructions}`);
+        cy.addSpecialInstructions(specialInstructions);
 
-      cy.logStep('Capture item number from product page');
-      ProductPage.waitForProductLoad();
-      ProductPage.getItemNumber().should('contain', productSku);
+        cy.logStep('Add product to cart');
+        cy.addToCart({ quantity: 1 });
+        cy.verifyCartCount(1);
 
-      cy.logStep(`Enter special instructions: ${specialInstructions}`);
-      cy.addSpecialInstructions(specialInstructions);
+        cy.logStep('Open cart and verify details');
+        cy.visitCartPage();
+        CartPage.verifyCartPageLoaded();
+        cy.verifyItemInCart(productSkuId, expectedItemDescription);
+        cy.verifySpecialInstructionsInCart(specialInstructions);
 
-      cy.logStep('Add product to cart');
-      cy.addToCart({ quantity: 1 });
-      cy.verifyCartCount(1);
-
-      cy.logStep('Open cart and verify details');
-      cy.visitCart();
-      CartPage.verifyCartPageLoaded();
-      cy.verifyItemInCart(productSku, expectedItemDescription);
-      cy.verifySpecialInstructionsInCart(specialInstructions);
-
-      cy.logStep('Remove all items from cart');
-      CartPage.removeAllItems();
+        cy.logStep('Remove all items from cart');
+        CartPage.removeAllItems();
+      });
     });
   });
 });

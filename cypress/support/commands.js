@@ -44,8 +44,19 @@ Cypress.Commands.add('searchProduct', (searchTerm) => {
   HomePage.searchProduct(searchTerm);
 });
 
-Cypress.Commands.add('verifySearchResult', (expectedSku) => {
-  ProductPage.verifyProductInResults(expectedSku);
+Cypress.Commands.add('verifySearchResult', (productSkuId) => {
+  ProductPage.verifyProductInResults(productSkuId);
+});
+
+Cypress.Commands.add('getStullerCredentials', () => {
+  const username = Cypress.env('STULLER_USERNAME');
+  const password = Cypress.env('STULLER_PASSWORD');
+
+  if (!username || !password) {
+    throw new Error('Missing STULLER_USERNAME/STULLER_PASSWORD. Configure CI secrets or set Cypress env vars.');
+  }
+
+  return cy.wrap({ username, password }, { log: false });
 });
 
 Cypress.Commands.add('addSpecialInstructions', (instructions) => {
@@ -60,7 +71,7 @@ Cypress.Commands.add('addToCart', (options = {}) => {
   ProductPage.addToCart();
 });
 
-Cypress.Commands.add('visitCart', () => {
+Cypress.Commands.add('visitCartPage', () => {
   CartPage.visitCartPage();
 });
 
