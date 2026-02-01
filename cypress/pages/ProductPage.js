@@ -24,7 +24,11 @@ class ProductPage {
   waitForProductLoad() {
     this.waitForPageLoad();
     return this;
-  }
+  } //I created a specific waitForProductLoad method that acts as a wrapper.
+  //  Currently, it just ensures the DOM is ready, but it acts as a placeholder.
+  //  If we later need to wait for specific API calls (like the price or inventory status)
+  //  to finish, we can add that logic inside waitForProductLoad without affecting
+  //  the generic page load check used elsewhere.
 
   waitForPageLoad() {
     cy.document().its('readyState').should('eq', 'complete');
@@ -65,6 +69,7 @@ class ProductPage {
       .and('not.be.disabled');
 
     // Re-query between actions to tolerate re-renders in CI.
+    // .filter(':visible').first() ensures we interact with visible elements only.
     cy.get(selector).filter(':visible').first().click({ force: true });
     cy.get(selector).filter(':visible').first().clear({ force: true });
     cy.get(selector).filter(':visible').first().type(instructions, { force: true });
@@ -85,9 +90,9 @@ class ProductPage {
       .first()
       .should(($input) => {
         if ($input.val() !== targetValue) {
-          $input.val(targetValue);
-          $input.trigger('input');
-          $input.trigger('change');
+          $input.val(targetValue);// I set the vlue directly as it was adding 1 before typing my target value
+          $input.trigger('input'); // Trigger input event to simulate user typing behavior
+          $input.trigger('change');// Trigger change event to ensure any listeners are notified
         }
 
         expect($input.val()).to.eq(targetValue);

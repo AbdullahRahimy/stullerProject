@@ -27,6 +27,10 @@
  * 4. NO RETRY LOGIC FOR DYNAMIC CONTENT
  *    Problem: Elements may not be immediately available
  *    Fix: Use Cypress's should() for automatic retries
+ * 
+ * 5. Authentication HANDLING
+ *   Problem: no authentication was done before accessing user-specific features
+ *  Fix: Added login step with session caching
  */
 
 /**
@@ -84,7 +88,7 @@ describe('Task 3: Packaging Product Page (Refactored)', () => {
       .first()
       .should(($img) => {
         expect($img[0].naturalWidth).to.be.greaterThan(0);
-      });
+      });// we could improve it by using hashing to verify exact image if needed
   });
 
   it('NEW: should display a product title', () => {

@@ -20,7 +20,7 @@ describe('Task 2: API + UI Hybrid Validation', () => {
     cy.getStullerCredentials().then(({ username, password }) => {
       cy.fixture('products').then((products) => {
         const productSkuId = products.task2Product.sku;
-        const apiBaseUrl = (Cypress.env('API_BASE_URL') || '').replace(/\/$/, '');
+        const apiBaseUrl = (Cypress.env('API_BASE_URL') || '').replace(/\/$/, '');// remove a valid trailing slash from the end of a URL string.
 
         if (!apiBaseUrl) {
           throw new Error('Missing API_BASE_URL. Configure Cypress env vars (e.g., in cypress.config.js env).');
@@ -29,7 +29,7 @@ describe('Task 2: API + UI Hybrid Validation', () => {
       cy.logStep('Fetch product data from API (basic auth)');
       cy.request({
         method: 'GET',
-        url: `${apiBaseUrl}/v2/products?SKU=${encodeURIComponent(productSkuId)}`,
+        url: `${apiBaseUrl}/v2/products?SKU=${encodeURIComponent(productSkuId)}`,// Encode SKU for URL safety like special characters ? & = etc.
         auth: {
           user: username,
           pass: password

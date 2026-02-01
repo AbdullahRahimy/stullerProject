@@ -23,7 +23,7 @@ class CartPage {
   };
 
   visitCartPage() {
-    cy.intercept('GET', '**/cart/getcart**').as('cartLoad');
+    cy.intercept('GET', '**/cart/getcart**').as('cartLoad');//its a wait helper to ensure cart data is loaded in netwwork traffic
     cy.get(this.selectors.cartIconLabel)
       .should('be.visible')
       .click();
@@ -34,7 +34,7 @@ class CartPage {
       .click();
     this.waitForPageLoad();
     cy.url().should('include', '/cart');
-    cy.wait('@cartLoad', { timeout: 15000 });
+    cy.wait('@cartLoad', { timeout: 15000 });//increasing the default timout of 4s to 15s in cypress
     return this;
   }
 
